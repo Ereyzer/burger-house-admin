@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type Action } from '@reduxjs/toolkit';
-import { DrinksApi } from '../../api/drinks';
-import type { CreateDrinkDto } from '../../dto/drink.dto';
+import { DishApi } from '../../api/dishes';
+import type { CreateDishDto } from '../../dto/dish.dto';
 
 interface Item {
   id: number;
@@ -24,38 +24,40 @@ const initialState: InitialState = {
   items: [],
 };
 
-const drinksApi = new DrinksApi();
+const dishApi = new DishApi();
 
-export const getAllDrinks = createAsyncThunk('drinks/getAll', async (_, thunkAPI) => {
+export const getAllDishes = createAsyncThunk('dish/getAll', async (_, thunkAPI) => {
   try {
-    return await drinksApi.getAll();
+    return await dishApi.getAll();
   } catch (e) {
     return thunkAPI.rejectWithValue((e as Error).message);
   }
 });
 
-export const updateDrinkPrice = createAsyncThunk(
-  'drink/updatePrice',
+export const updateDishPrice = createAsyncThunk(
+  'dish/updatePrice',
   async ({ id, price }: { id: number; price: number }, thunkAPI) => {
     try {
-      return await drinksApi.updatePrice(id, price);
+      return await dishApi.updatePrice(id, price);
     } catch (e) {
       return thunkAPI.rejectWithValue((e as Error).message);
     }
   },
 );
 
-export const addDrink = createAsyncThunk('drink/add', async (data: Omit<Item, 'id'>, thunkAPI) => {
+export const addDish = createAsyncThunk('dish/add', async (data: CreateDishDto, thunkAPI) => {
   try {
-    return await drinksApi.addItem<CreateDrinkDto>(data);
+    return await dishApi.addItem<CreateDishDto>(data);
   } catch (e) {
+    console.log('errrrrrrrrrrroooor: ', e);
+
     return thunkAPI.rejectWithValue((e as Error).message);
   }
 });
 
-export const rmDrink = createAsyncThunk('drink/rmDrink', async (data: number, thunkAPI) => {
+export const rmDish = createAsyncThunk('dish/rmDrink', async (data: number, thunkAPI) => {
   try {
-    return await drinksApi.rmItem(data);
+    return await dishApi.rmItem(data);
   } catch (e) {
     return thunkAPI.rejectWithValue((e as Error).message);
   }
@@ -69,12 +71,13 @@ const rejectedCalback = (state: typeof initialState, action: Action) => {
 
   state.errorMessage = (action as { payload: string } & Action).payload;
 };
+
 const slice = createSlice({
-  name: 'drink',
+  name: 'dish',
   initialState,
   reducers: {},
   extraReducers: bilder => {
-    bilder.addAsyncThunk(getAllDrinks, {
+    bilder.addAsyncThunk(getAllDishes, {
       pending: pendingCalback,
       fulfilled: (state, action) => {
         state.loaded = true;
@@ -84,7 +87,8 @@ const slice = createSlice({
       },
       rejected: rejectedCalback,
     });
-    bilder.addAsyncThunk(updateDrinkPrice, {
+
+    bilder.addAsyncThunk(updateDishPrice, {
       pending: pendingCalback,
       fulfilled: (state, action) => {
         state.loading = false;
@@ -100,7 +104,7 @@ const slice = createSlice({
       },
       rejected: rejectedCalback,
     });
-    bilder.addAsyncThunk(addDrink, {
+    bilder.addAsyncThunk(addDish, {
       pending: pendingCalback,
       fulfilled: (state, action) => {
         state.loading = false;
@@ -109,7 +113,7 @@ const slice = createSlice({
       },
       rejected: rejectedCalback,
     });
-    bilder.addAsyncThunk(rmDrink, {
+    bilder.addAsyncThunk(rmDish, {
       pending: pendingCalback,
       fulfilled: (state, action) => {
         state.loading = false;
