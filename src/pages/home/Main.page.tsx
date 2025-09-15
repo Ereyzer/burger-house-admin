@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import Home from './Home.page';
 import Drinks from '../drinks/Drinks.page';
+import Dishes from '../dishes/Dishes.page';
 
 function MainPage() {
   const position = useSelector((state: RootState) => state.navigate);
@@ -15,6 +16,8 @@ function MainPage() {
         return <Home />;
       case 'drinks':
         return <Drinks />;
+      case 'dishes':
+        return <Dishes />;
 
       default:
         return <Home />;

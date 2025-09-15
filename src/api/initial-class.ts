@@ -77,3 +77,55 @@ export class BaseApi {
     };
   };
 }
+
+export class BasicApiClass {
+  readonly #baseInstance = BaseApi.instance;
+  baseUrl = '';
+  constructor() {
+    // this.baseUrl = baseUrl;
+    this.getAll = this.#baseInstance.refreshHelper(this.getAll);
+    this.updatePrice = this.#baseInstance.refreshHelper(this.updatePrice);
+    this.updateItem = this.#baseInstance.refreshHelper(this.updateItem);
+    this.addItem = this.#baseInstance.refreshHelper(this.addItem);
+    this.rmItem = this.#baseInstance.refreshHelper(this.rmItem);
+  }
+  public getAll = () =>
+    axios
+      .get(this.baseUrl, { headers: this.#baseInstance.getHeaders() })
+      .then(res => res.data)
+      .catch(err => {
+        throw err;
+      });
+
+  public updatePrice = (id: number, price: number) =>
+    axios
+      .patch(`${this.baseUrl}/price/${id}`, { price }, { headers: this.#baseInstance.getHeaders() })
+      .then(res => res.data)
+      .catch(err => {
+        throw err;
+      });
+
+  public updateItem = (id: number) =>
+    axios
+      .patch(`${this.baseUrl}/${id}`, {}, { headers: this.#baseInstance.getHeaders() })
+      .then(res => res.data)
+      .catch(err => {
+        throw err;
+      });
+
+  public addItem = <T extends object>(data: T) =>
+    axios
+      .post(this.baseUrl, data, { headers: this.#baseInstance.getHeaders() })
+      .then(response => response.data)
+      .catch(err => {
+        throw err;
+      });
+
+  public rmItem = (id: number) =>
+    axios
+      .delete(`${this.baseUrl}/${id}`, { headers: this.#baseInstance.getHeaders() })
+      .then(res => res.data)
+      .catch(err => {
+        throw err;
+      });
+}

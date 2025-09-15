@@ -9,16 +9,16 @@ import { store } from './store/index.ts';
 import { BrowserRouter } from 'react-router-dom';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Provider store={store}>
-      <StyledEngineProvider injectFirst>
-        <AppTheme>
-          <BrowserRouter>
-            <CssBaseline enableColorScheme />
-            <App />
-          </BrowserRouter>
-        </AppTheme>
-      </StyledEngineProvider>
-    </Provider>
-  </StrictMode>,
+  // <StrictMode>
+  <Provider store={store}>
+    <StyledEngineProvider injectFirst>
+      <AppTheme>
+        <BrowserRouter>
+          <CssBaseline enableColorScheme />
+          <App />
+        </BrowserRouter>
+      </AppTheme>
+    </StyledEngineProvider>
+  </Provider>,
+  // </StrictMode>,
 );
