@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, type Action } from '@reduxjs/toolkit';
-import { DishApi } from '../../api/dishes';
+import { DishApi } from '../../api/services/dishes';
 import type { CreateDishDto } from '../../dto/dish.dto';
 
 interface Item {
@@ -7,7 +7,6 @@ interface Item {
   name: string;
   price: number;
   calories: number;
-  description?: string;
 }
 
 interface InitialState {

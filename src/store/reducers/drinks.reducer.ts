@@ -1,13 +1,11 @@
 import { createAsyncThunk, createSlice, type Action } from '@reduxjs/toolkit';
-import { DrinksApi } from '../../api/drinks';
+import { DrinksApi } from '../../api/services/drinks';
 import type { CreateDrinkDto } from '../../dto/drink.dto';
 
 interface Item {
   id: number;
   name: string;
   price: number;
-  calories: number;
-  description?: string;
 }
 
 interface InitialState {
@@ -45,7 +43,7 @@ export const updateDrinkPrice = createAsyncThunk(
   },
 );
 
-export const addDrink = createAsyncThunk('drink/add', async (data: Omit<Item, 'id'>, thunkAPI) => {
+export const addDrink = createAsyncThunk('drink/add', async (data: CreateDrinkDto, thunkAPI) => {
   try {
     return await drinksApi.addItem<CreateDrinkDto>(data);
   } catch (e) {
