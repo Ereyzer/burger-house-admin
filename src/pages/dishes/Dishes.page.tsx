@@ -36,7 +36,7 @@ function Dishes() {
     title: '',
     body: '',
   });
-  const [addDrinkModalOpen, setAddDrinkModalOpen] = useState(false);
+  const [addDishModalOpen, setAddDishModalOpen] = useState(false);
   const dispatch = useAppDispatch();
 
   const handleDialogClose = () => {
@@ -50,7 +50,7 @@ function Dishes() {
   };
 
   const handleAddDrinModalClose = () => {
-    setAddDrinkModalOpen(false);
+    setAddDishModalOpen(false);
   };
 
   useEffect(() => {
@@ -205,10 +205,10 @@ function Dishes() {
           </Button>
         </DialogActions>
       </Dialog>
-      <IconButton onClick={() => setAddDrinkModalOpen(true)}>
+      <IconButton onClick={() => setAddDishModalOpen(true)}>
         <AddCircleOutlineRoundedIcon />
       </IconButton>
-      <AddDishModal isOpen={addDrinkModalOpen} handleClose={handleAddDrinModalClose} />
+      <AddDishModal isOpen={addDishModalOpen} handleClose={handleAddDrinModalClose} />
     </>
   );
 }

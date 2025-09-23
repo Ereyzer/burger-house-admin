@@ -6,6 +6,7 @@ import type { RootState } from '../../store';
 import Home from './Home.page';
 import Drinks from '../drinks/Drinks.page';
 import Dishes from '../dishes/Dishes.page';
+import Menu from '../menu/Menu.page';
 
 function MainPage() {
   const position = useSelector((state: RootState) => state.navigate);
@@ -18,6 +19,8 @@ function MainPage() {
         return <Drinks />;
       case 'dishes':
         return <Dishes />;
+      case 'menu':
+        return <Menu />;
 
       default:
         return <Home />;

@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import navigateReducer from './reducers/naviagation.reducer';
 import drinksReducer from './reducers/drinks.reducer';
 import dishReducer from './reducers/dishes.reducer';
+import menuReducer from './reducers/menu.reducer';
+import categoriesReducer from './reducers/category.reducer';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +15,8 @@ export const store = configureStore({
     navigate: navigateReducer,
     drinks: drinksReducer,
     dishes: dishReducer,
+    menu: menuReducer,
+    categories: categoriesReducer,
   },
 });
 

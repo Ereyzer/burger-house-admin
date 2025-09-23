@@ -13,11 +13,13 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { changePosition } from '../store/reducers/naviagation.reducer';
 import LunchDiningRoundedIcon from '@mui/icons-material/LunchDiningRounded';
+import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
 
 const mainListItems = [
   { id: 'home', text: 'Головна', icon: <HomeRoundedIcon /> },
   { id: 'drinks', text: 'Напої', icon: <LocalDrinkRoundedIcon /> },
   { id: 'dishes', text: 'Страви', icon: <LunchDiningRoundedIcon /> },
+  { id: 'menu', text: 'Меню', icon: <MenuBookRoundedIcon /> },
   // { text: 'Analytics', icon: <AnalyticsRoundedIcon /> },
   //   { text: 'Clients', icon: <PeopleRoundedIcon /> },
   //   { text: 'Tasks', icon: <AssignmentRoundedIcon /> },

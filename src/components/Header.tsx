@@ -30,7 +30,7 @@ export default function Header() {
           <NotificationsRoundedIcon />
         </MenuButton>
         <ColorModeIconDropdown /> */}
-        <ThemeSwitcher sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+        <ThemeSwitcher />
       </Stack>
     </Stack>
   );
