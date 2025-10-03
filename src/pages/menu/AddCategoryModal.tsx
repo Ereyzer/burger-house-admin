@@ -10,10 +10,11 @@ import {
   Modal,
   type TypographyStyle,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const OpenMOdalButtonStyle: TypographyStyle = {
   marginBottom: '10px',
+  marginTop: '20px',
 };
 
 const style = {
@@ -24,6 +25,8 @@ const style = {
   width: 700,
   bgcolor: 'background.paper',
   border: '2px solid #000',
+  maxHeight: '80%',
+  overflow: 'scroll',
   boxShadow: 24,
   pt: 2,
   px: 4,
@@ -42,7 +45,11 @@ interface Props {
 
 function ChooseCategoryInMenuModal(props: Props) {
   const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState<string[]>(() => props.checkedList.map(id => id));
+  const [checked, setChecked] = useState<string[]>([]);
+
+  useEffect(() => {
+    setChecked(props.checkedList.map(id => id));
+  }, [props.checkedList]);
 
   const handleOpen = () => {
     setOpen(true);

@@ -2,34 +2,47 @@ import { alpha, Box, Stack } from '@mui/material';
 import SideMenu from '../../components/SideMenu';
 import Header from '../../components/Header';
 import { useSelector } from 'react-redux';
-import type { RootState } from '../../store';
+import { type RootState } from '../../store';
 import Home from './Home.page';
 import Drinks from '../drinks/Drinks.page';
 import Dishes from '../dishes/Dishes.page';
 import Menu from '../menu/Menu.page';
+import { useEffect, useRef, useState } from 'react';
+
+const currentPage = (menuId: string) => {
+  switch (menuId) {
+    case 'home':
+      return <Home />;
+    case 'drinks':
+      return <Drinks />;
+    case 'dishes':
+      return <Dishes />;
+    case 'menu':
+      return <Menu />;
+
+    default:
+      return <Home />;
+  }
+};
 
 function MainPage() {
-  const position = useSelector((state: RootState) => state.navigate);
-  const currentPage = () => {
-    if (!position[0]?.menuId) return <Home />;
-    switch (position[0].menuId) {
-      case 'home':
-        return <Home />;
-      case 'drinks':
-        return <Drinks />;
-      case 'dishes':
-        return <Dishes />;
-      case 'menu':
-        return <Menu />;
+  const position = useSelector((state: RootState) => state.navigate[0]?.menuId);
+  const [pageWithPosition, setPageWithPosition] = useState(<Home />);
+  const firstLoad = useRef(true);
 
-      default:
-        return <Home />;
+  useEffect(() => {
+    if (!position) return;
+    if (firstLoad.current) {
+      firstLoad.current = false;
+      return;
     }
-  };
+    setPageWithPosition(currentPage(position));
+  }, [position]);
+
   return (
     <Box sx={{ display: 'flex' }}>
       <SideMenu />
-      {/* <AppNavbar /> */}
+
       <Box
         component="main"
         sx={theme => ({
@@ -51,7 +64,7 @@ function MainPage() {
         >
           <Header />
 
-          {currentPage()}
+          {pageWithPosition}
         </Stack>
       </Box>
     </Box>

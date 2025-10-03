@@ -10,11 +10,12 @@ import {
   Modal,
   type TypographyStyle,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ChoosenMealList from './ChoosenMealList';
 
 const OpenMOdalButtonStyle: TypographyStyle = {
   marginBottom: '10px',
+  marginTop: '20px',
 };
 
 const style = {
@@ -45,9 +46,21 @@ interface Props {
   total: number;
 }
 
-function ChooseMealsInMenuModal(props: Props) {
+function AddMealinUpdateMenuModal({
+  checkedList,
+  buttonName,
+  mealList,
+  setCheckedList,
+  addTotal,
+  minusTotal,
+  total,
+}: Props) {
   const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState<number[]>(() => props.checkedList.map(id => id));
+  const [checked, setChecked] = useState<number[]>([]);
+
+  useEffect(() => {
+    setChecked(checkedList.map(id => id));
+  }, [checkedList]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -63,17 +76,17 @@ function ChooseMealsInMenuModal(props: Props) {
 
     if (currentIndex === -1) {
       newChecked.push(value);
-      props.addTotal(price);
+      addTotal(price);
     } else {
       newChecked.splice(currentIndex, 1);
-      props.minusTotal(price);
+      minusTotal(price);
     }
 
     setChecked(newChecked);
   };
 
   const handleSave = () => {
-    props.setCheckedList([...checked]);
+    setCheckedList([...checked]);
     handleClose();
   };
   // useEffect(() => {
@@ -85,7 +98,7 @@ function ChooseMealsInMenuModal(props: Props) {
   // }, [drinks]);
 
   const choosenList = () => {
-    const list = props.mealList.filter(({ id }) => {
+    const list = mealList.filter(({ id }) => {
       if (checked.includes(id)) {
         return true;
       } else {
@@ -98,7 +111,7 @@ function ChooseMealsInMenuModal(props: Props) {
   return (
     <>
       <Button sx={OpenMOdalButtonStyle} onClick={handleOpen} variant="outlined">
-        {props.buttonName}
+        {buttonName}
       </Button>
       <Modal
         open={open}
@@ -108,7 +121,7 @@ function ChooseMealsInMenuModal(props: Props) {
       >
         <Box sx={{ ...style }}>
           <List sx={{ width: '100%', maxWidth: 600, bgcolor: 'background.paper' }}>
-            {props.mealList.map(item => (
+            {mealList.map(item => (
               <ListItem key={item.id}>
                 <ListItemButton role={undefined} onClick={handleToggle(item.id, item.price)} dense>
                   <ListItemIcon>
@@ -128,9 +141,9 @@ function ChooseMealsInMenuModal(props: Props) {
           <Button onClick={handleSave}>Додати</Button>
         </Box>
       </Modal>
-      <ChoosenMealList totalPrice={props.total} list={choosenList()} />
+      <ChoosenMealList totalPrice={total} list={choosenList()} />
     </>
   );
 }
 
-export default ChooseMealsInMenuModal;
+export default AddMealinUpdateMenuModal;
