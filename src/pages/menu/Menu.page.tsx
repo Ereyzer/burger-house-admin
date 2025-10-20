@@ -10,7 +10,6 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -25,7 +24,7 @@ import UpdateMenuItemModal from './UpdateMenuItemModal';
 import type { PropsOf } from '@emotion/react';
 
 function Menu() {
-  const { items, loading } = useAppSelector(state => state.menu);
+  const { items, loading, loaded } = useAppSelector(state => state.menu);
   //   const [prices, setPrices] = useState<{ [key: number]: number }>({});
   const [dialogOpen, setDialogOpen] = useState<{
     open: boolean;
@@ -52,8 +51,9 @@ function Menu() {
     setUpdateMenuProps(p => ({ ...p, isOpen: true, itemId }));
   };
   useEffect(() => {
+    if (loaded) return;
     dispatch(getAllMenu());
-  }, [dispatch]);
+  }, [dispatch, loaded]);
 
   const handleAddItemModalClose = () => {
     setAddItemModalOpen(false);
@@ -117,7 +117,7 @@ function Menu() {
 
   return (
     <>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -189,30 +189,14 @@ function Menu() {
       >
         <AddCircleOutlineRoundedIcon />
       </IconButton>
-      <Dialog
-        open={dialogOpen.open}
-        onClose={handleDialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        disableRestoreFocus
-      >
-        <DialogTitle id="alert-dialog-title">{dialogOpen.title}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">{dialogOpen.body}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose}>Відмінити</Button>
-          <Button onClick={dialogOpen.agree} autoFocus>
-            Пітвердити
-          </Button>
-        </DialogActions>
-      </Dialog>
       <AddMenuItemModal isOpen={addItemModalOpen} handleClose={handleAddItemModalClose} />
-      <UpdateMenuItemModal
-        isOpen={updateMenuProps.isOpen}
-        onClose={updateMenuProps.onClose}
-        itemId={updateMenuProps.itemId}
-      />
+      {updateMenuProps.isOpen && (
+        <UpdateMenuItemModal
+          isOpen={updateMenuProps.isOpen}
+          onClose={updateMenuProps.onClose}
+          itemId={updateMenuProps.itemId}
+        />
+      )}
     </>
   );
 }

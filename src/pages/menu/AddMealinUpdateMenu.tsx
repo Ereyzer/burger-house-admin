@@ -11,6 +11,7 @@ import {
   type TypographyStyle,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import ChoosenMealList from './ChoosenMealList';
 
 const OpenMOdalButtonStyle: TypographyStyle = {
   marginBottom: '10px',
@@ -23,33 +24,45 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 700,
+  height: '90%',
   bgcolor: 'background.paper',
   border: '2px solid #000',
-  maxHeight: '80%',
-  overflow: 'scroll',
   boxShadow: 24,
   pt: 2,
   px: 4,
   pb: 3,
+  overflow: 'scroll',
 };
-interface Category {
-  id: string;
-  display_name: string;
+interface Meal {
+  id: number;
+  name: string;
+  price: number;
 }
 interface Props {
   buttonName: string;
-  categoryList: Category[];
-  setCheckedList: (list: string[]) => void;
-  checkedList: string[];
+  mealList: Meal[];
+  setCheckedList: (list: number[]) => void;
+  checkedList: number[];
+  addTotal: (price: number) => void;
+  minusTotal: (price: number) => void;
+  total: number;
 }
 
-function ChooseCategoryInMenuModal(props: Props) {
+function AddMealinUpdateMenuModal({
+  checkedList,
+  buttonName,
+  mealList,
+  setCheckedList,
+  addTotal,
+  minusTotal,
+  total,
+}: Props) {
   const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState<string[]>([]);
+  const [checked, setChecked] = useState<number[]>([]);
 
   useEffect(() => {
-    setChecked(props.checkedList.map(id => id));
-  }, [props.checkedList]);
+    setChecked(checkedList.map(id => id));
+  }, [checkedList]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -59,28 +72,48 @@ function ChooseCategoryInMenuModal(props: Props) {
     setOpen(false);
   };
 
-  const handleToggle = (value: string) => () => {
+  const handleToggle = (value: number, price: number) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 
     if (currentIndex === -1) {
       newChecked.push(value);
+      addTotal(price);
     } else {
       newChecked.splice(currentIndex, 1);
+      minusTotal(price);
     }
 
     setChecked(newChecked);
   };
 
   const handleSave = () => {
-    props.setCheckedList([...checked]);
+    setCheckedList([...checked]);
     handleClose();
   };
+  // useEffect(() => {
+  //   let total = 0;
+  //   drinks.forEach(item => {
+  //     total = Number.parseFloat((total + item.price).toFixed(2));
+  //   });
+  //   setTotalDrinksPrice(total);
+  // }, [drinks]);
 
+  const choosenList = () => {
+    const list = mealList.filter(({ id }) => {
+      if (checked.includes(id)) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    return list;
+  };
   return (
     <>
       <Button sx={OpenMOdalButtonStyle} onClick={handleOpen} variant="outlined">
-        {props.buttonName}
+        {buttonName}
       </Button>
       <Modal
         open={open}
@@ -90,9 +123,9 @@ function ChooseCategoryInMenuModal(props: Props) {
       >
         <Box sx={{ ...style }}>
           <List sx={{ width: '100%', maxWidth: 600, bgcolor: 'background.paper' }}>
-            {props.categoryList.map(item => (
+            {mealList.map(item => (
               <ListItem key={item.id}>
-                <ListItemButton role={undefined} onClick={handleToggle(item.id)} dense>
+                <ListItemButton role={undefined} onClick={handleToggle(item.id, item.price)} dense>
                   <ListItemIcon>
                     <Checkbox
                       edge="start"
@@ -101,37 +134,18 @@ function ChooseCategoryInMenuModal(props: Props) {
                       disableRipple
                     />
                   </ListItemIcon>
-                  <ListItemText>{item.display_name}</ListItemText>
+                  <ListItemText>{item.name}</ListItemText>
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
           <Button onClick={handleClose}>Закрити</Button>
-          <Button onClick={handleSave}>Оновити</Button>
+          <Button onClick={handleSave}>Додати</Button>
         </Box>
       </Modal>
-      <List
-        sx={{
-          width: '100%',
-          maxWidth: '600px',
-          minHeight: '35px',
-          borderStyle: 'solid',
-          borderWidth: '1px',
-          borderColor: 'grey',
-        }}
-      >
-        {checked.map(id => {
-          return (
-            <ListItem key={id}>
-              <ListItemText>
-                {props.categoryList.find(item => item.id === id)?.display_name}
-              </ListItemText>
-            </ListItem>
-          );
-        })}
-      </List>
+      <ChoosenMealList totalPrice={total} list={choosenList()} />
     </>
   );
 }
 
-export default ChooseCategoryInMenuModal;
+export default AddMealinUpdateMenuModal;

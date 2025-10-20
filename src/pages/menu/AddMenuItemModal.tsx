@@ -68,13 +68,13 @@ function AddMenuItemModal({ isOpen = true, handleClose }: Props) {
 
   const spend = Number.parseFloat((totalDrinksPrice + totalDishPrice).toFixed(2));
   useEffect(() => {
-    if (!drinkList.loaded) {
+    if (!drinkList.loaded && !drinkList.loading) {
       dispatch(getAllDrinks());
     }
-    if (!dishList.loaded) {
+    if (!dishList.loaded && !dishList.loading) {
       dispatch(getAllDishes());
     }
-    if (!categoryList.loaded) {
+    if (!categoryList.loaded && !categoryList.loading) {
       dispatch(getAllCategories());
     }
   }, [dispatch, drinkList, dishList, categoryList]);
@@ -86,7 +86,7 @@ function AddMenuItemModal({ isOpen = true, handleClose }: Props) {
 
   const handleSaveItem = () => {
     const cal = calories || undefined;
-    console.log(cal);
+    // console.log(cal);
 
     dispatch(
       addNewMenuItem({
