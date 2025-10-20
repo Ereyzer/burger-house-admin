@@ -7,19 +7,20 @@ import Stack from '@mui/material/Stack';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
-import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
+// import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import LocalDrinkRoundedIcon from '@mui/icons-material/LocalDrinkRounded';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { changePosition } from '../store/reducers/naviagation.reducer';
 import LunchDiningRoundedIcon from '@mui/icons-material/LunchDiningRounded';
 import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
 
-const mainListItems = [
+const mainListItems: { id: string; text: string; icon: React.ReactNode }[] = [
   { id: 'home', text: 'Головна', icon: <HomeRoundedIcon /> },
   { id: 'drinks', text: 'Напої', icon: <LocalDrinkRoundedIcon /> },
   { id: 'dishes', text: 'Страви', icon: <LunchDiningRoundedIcon /> },
   { id: 'menu', text: 'Меню', icon: <MenuBookRoundedIcon /> },
+  { id: 'about', text: 'Про заклад', icon: <InfoRoundedIcon /> },
   // { text: 'Analytics', icon: <AnalyticsRoundedIcon /> },
   //   { text: 'Clients', icon: <PeopleRoundedIcon /> },
   //   { text: 'Tasks', icon: <AssignmentRoundedIcon /> },
@@ -27,8 +28,8 @@ const mainListItems = [
 
 const secondaryListItems = [
   { text: 'Settings', icon: <SettingsRoundedIcon /> },
-  { text: 'About', icon: <InfoRoundedIcon /> },
-  { text: 'Feedback', icon: <HelpRoundedIcon /> },
+  // { text: 'About', icon: <InfoRoundedIcon /> },
+  // { text: 'Feedback', icon: <HelpRoundedIcon /> },
 ];
 
 export default function MenuContent() {

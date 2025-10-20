@@ -8,6 +8,7 @@ import Drinks from '../drinks/Drinks.page';
 import Dishes from '../dishes/Dishes.page';
 import Menu from '../menu/Menu.page';
 import { useEffect, useRef, useState } from 'react';
+import AboutPlace from '../aboutPlace/AboutPlace.page';
 
 const currentPage = (menuId: string) => {
   switch (menuId) {
@@ -19,6 +20,8 @@ const currentPage = (menuId: string) => {
       return <Dishes />;
     case 'menu':
       return <Menu />;
+    case 'about':
+      return <AboutPlace/>
 
     default:
       return <Home />;

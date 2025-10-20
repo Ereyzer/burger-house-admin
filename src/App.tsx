@@ -1,7 +1,7 @@
 import './css/App.css';
 import Login from './pages/login/Login.page';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import LoaderPage from './components/auth/Loader';
 import { useAppDispatch, useAppSelector } from './store';
 import { BaseApi } from './api/initial-class';
@@ -14,6 +14,7 @@ function App() {
   const { user, loading, errorMessage } = useAppSelector(state => state.user);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const notSend = useRef(true);
   useEffect(() => {
     setTimeout(() => {
       setIsloading(false);
@@ -21,6 +22,8 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (!notSend.current) return;
+    notSend.current = false;
     if (loading) return;
     if (!user && !errorMessage) {
       const at = BaseApi.instance.token;
