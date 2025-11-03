@@ -1,5 +1,11 @@
+import OrdersList from '../../components/orders/OrdersList';
+
 function Home() {
-  return <h1>HOME</h1>;
+  return (
+    <>
+      <OrdersList />
+    </>
+  );
 }
 
 export default Home;
