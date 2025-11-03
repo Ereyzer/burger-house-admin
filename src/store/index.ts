@@ -7,6 +7,7 @@ import drinksReducer from './reducers/drinks.reducer';
 import dishReducer from './reducers/dishes.reducer';
 import menuReducer from './reducers/menu.reducer';
 import categoriesReducer from './reducers/category.reducer';
+import ordersReducer from './reducers/orders.reducer';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     dishes: dishReducer,
     menu: menuReducer,
     categories: categoriesReducer,
+    orders: ordersReducer,
   },
 });
 
