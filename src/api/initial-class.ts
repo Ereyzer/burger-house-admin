@@ -12,11 +12,11 @@ export class BaseApi {
     axios.defaults.baseURL = this.#BASE_URL;
     // this.#token = sessionStorage.getItem('at');
 
-    // if (!this.#token) {
-    //   this.#token = localStorage.getItem('at');
-    // } else {
-    //   this.#rememberMe = false;
-    // }
+    if (!this.#token) {
+      this.#token = localStorage.getItem('at');
+    } else {
+      this.#rememberMe = false;
+    }
   }
 
   private decodeJwt = (token: string): null | { exp: number } => {
@@ -56,8 +56,11 @@ export class BaseApi {
 
   public getAndUpdateToken = async () => {
     this.getTokenFromStorage();
+    console.log(1);
+
     if (!this.#token) return;
     const leftMs: number | false = this.isTimeToExpirationToken(this.#token);
+    console.log(2);
 
     if (!leftMs) {
       clearTimeout(this.#timeoutTokenUpdate);

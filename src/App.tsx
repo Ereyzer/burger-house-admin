@@ -27,6 +27,7 @@ function App() {
     if (loading) return;
     if (!user && !errorMessage) {
       const at = BaseApi.instance.token;
+
       if (!at) {
         navigate('/login', { replace: true });
       } else {

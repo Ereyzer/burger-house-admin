@@ -9,7 +9,6 @@ export class UserApi {
   constructor() {
     this.#base_instance.refreshFunc = this.refreshToken;
     this.getLoggetUser = this.#base_instance.refreshHelper(this.getLoggetUser);
-    this.#base_instance.getAndUpdateToken();
   }
   //TODO:
   public static get instance() {

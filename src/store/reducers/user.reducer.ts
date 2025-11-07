@@ -29,10 +29,16 @@ export const loginUser = createAsyncThunk('user/login', async (data: LoginUserDt
   }
 });
 export const getLoggetUser = createAsyncThunk('user/getLogget', async (_, thunkAPI) => {
+  console.log('try');
+
   try {
     const response = await apiUser.getLoggetUser();
+    console.log(response);
+
     return response;
   } catch (e) {
+    console.log(e);
+
     return thunkAPI.rejectWithValue((e as Error).message);
   }
 });

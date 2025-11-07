@@ -21,7 +21,7 @@ const currentPage = (menuId: string) => {
     case 'menu':
       return <Menu />;
     case 'about':
-      return <AboutPlace/>
+      return <AboutPlace />;
 
     default:
       return <Home />;

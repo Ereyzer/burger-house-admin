@@ -13,7 +13,9 @@ import {
   ListItemButton,
   ListItemText,
   TextField,
+  Typography,
 } from '@mui/material';
+import type { OpenDay } from './interface';
 
 interface AboutData {
   id?: number;
@@ -21,8 +23,19 @@ interface AboutData {
   instagram: string;
   email: string;
   phone: string;
-  about_description: string;
+  placeDescription: string;
+  placeAddress: string;
+  opennigHours: { [key: number]: OpenDay };
 }
+const defoultOpennigHoursArr: OpenDay[] = [
+  { dayOfWeek: 0, opensAt: null, closesAt: null },
+  { dayOfWeek: 1, opensAt: null, closesAt: null },
+  { dayOfWeek: 2, opensAt: null, closesAt: null },
+  { dayOfWeek: 3, opensAt: null, closesAt: null },
+  { dayOfWeek: 4, opensAt: null, closesAt: null },
+  { dayOfWeek: 5, opensAt: null, closesAt: null },
+  { dayOfWeek: 6, opensAt: null, closesAt: null },
+];
 
 const contactsList: { id: keyof AboutData; name: string; defoult: string }[] = [
   { id: 'facebook', name: 'Facebook', defoult: 'Додати посилання на facebook' },
@@ -38,8 +51,11 @@ function AboutPlace() {
     instagram: '',
     email: '',
     phone: '',
-    about_description: '',
+    placeDescription: '',
+    placeAddress: '',
+    opennigHours: { 0: defoultOpennigHoursArr[0] },
   });
+
   const notfirstRequest = useRef(true);
   const [openDialog, setOpenDialog] = useState<keyof AboutData | null>(null);
   const [dialogItem, setDialogItem] = useState<(typeof contactsList)[number] | undefined>(
@@ -63,7 +79,24 @@ function AboutPlace() {
     notfirstRequest.current = false;
     aboutApi
       .getAbout()
-      .then(data => data && setData(prev => ({ ...prev, ...data })))
+      .then(data => {
+        return (
+          data &&
+          setData(prev => ({
+            ...prev,
+            facebook: data.facebook || '',
+            instagram: data.instagram || '',
+            email: data.email || '',
+            phone: data.phone || '',
+            placeDescription: data.placeDescription || '',
+            placeAddress: data.placeAddress || '',
+            opennigHours: [...data.openningHours].reduce((acc, item) => {
+              acc = { ...acc, [item.dayOfWeek]: item };
+              return acc;
+            }, {}),
+          }))
+        );
+      })
       .catch(err => {
         console.log(err);
       });
@@ -74,8 +107,15 @@ function AboutPlace() {
   };
   const closeContactItem = () => setOpenDialog(null);
   const onSave = () => {
-    const saveData = { ...data };
-    delete saveData.id;
+    const saveData = {
+      facebook: data.facebook || null,
+      instagram: data.instagram || null,
+      email: data.email || null,
+      phone: data.phone || null,
+      placeDescription: data.placeDescription || null,
+      placeAddress: data.placeAddress || null,
+    };
+
     aboutApi
       .updateAbout(saveData)
       .then(data => {
@@ -86,6 +126,40 @@ function AboutPlace() {
       });
   };
 
+  const changeOpenHours = (value: string, id: number) => {
+    setData(prev => ({
+      ...prev,
+      opennigHours: { ...prev.opennigHours, [id]: { ...prev.opennigHours[id], opensAt: value } },
+    }));
+  };
+  const changeCloseHours = (value: string, id: number) => {
+    setData(prev => ({
+      ...prev,
+      opennigHours: { ...prev.opennigHours, [id]: { ...prev.opennigHours[id], closesAt: value } },
+    }));
+  };
+
+  const saveDayOpeningTime = (data: OpenDay) => {
+    aboutApi
+      .updateOpenigHours(data)
+      .then()
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  const resetOpeningTime = (dayOfWeek: number) => {
+    setData(prev => ({
+      ...prev,
+      opennigHours: {
+        ...prev.opennigHours,
+        [dayOfWeek]: {
+          dayOfWeek,
+          opensAt: null,
+          closesAt: null,
+        },
+      },
+    }));
+  };
   return (
     <>
       <Box>
@@ -128,7 +202,7 @@ function AboutPlace() {
                   onClick={() => openContactItem(id)}
                   dense
                 >
-                  <ListItemText>{data[id] || defoult}</ListItemText>
+                  {<ListItemText>{id || defoult}</ListItemText>}
                 </ListItemButton>
               </ListItem>
             );
@@ -163,22 +237,88 @@ function AboutPlace() {
             </DialogActions>
           </Dialog>
         )}
+        <h2>Адреса</h2>
+        <TextField
+          multiline
+          rows={3}
+          fullWidth
+          value={data.placeAddress}
+          onChange={e => updateDataElement('placeAddress', e.target.value)}
+          sx={{ marginBottom: '20px' }}
+        ></TextField>
+
         <h2>Про Заклад</h2>
 
         <TextField
-          id="outlined-multiline-static"
           label="Про заклад"
           multiline
           rows={7}
           fullWidth
-          value={data['about_description']}
-          onChange={e => updateDataElement('about_description', e.target.value)}
+          value={data.placeDescription}
+          onChange={e => updateDataElement('placeDescription', e.target.value)}
           sx={{ marginBottom: '20px' }}
         />
 
         <Button onClick={onSave} variant="outlined">
           Зберегти
         </Button>
+
+        <h2>Години роботи</h2>
+        <List>
+          {Object.values(data.opennigHours).map(i => {
+            let day = '';
+            switch (i.dayOfWeek) {
+              case 0:
+                day = 'Неділя';
+                break;
+
+              case 1:
+                day = 'Понеділок';
+                break;
+
+              case 2:
+                day = 'Вівторрок';
+                break;
+
+              case 3:
+                day = 'Середа';
+                break;
+
+              case 4:
+                day = 'Четвер';
+                break;
+
+              case 5:
+                day = "П'ятниця";
+                break;
+              case 6:
+                day = 'Субота';
+                break;
+            }
+            return (
+              <ListItem
+                key={i.dayOfWeek}
+                sx={{ width: '600px', display: 'flex', justifyContent: 'space-between' }}
+              >
+                <Typography sx={{ width: '40px' }}>{day}</Typography>
+                <TextField
+                  type="time"
+                  value={i.opensAt || ''}
+                  label={'З '}
+                  onChange={e => changeOpenHours(e.target.value, i.dayOfWeek)}
+                />
+                <TextField
+                  type="time"
+                  value={i.closesAt || ''}
+                  onChange={e => changeCloseHours(e.target.value, i.dayOfWeek)}
+                  label="По "
+                />
+                <Button onClick={() => resetOpeningTime(i.dayOfWeek)}>Скинути</Button>
+                <Button onClick={() => saveDayOpeningTime(i)}>Зберегти</Button>
+              </ListItem>
+            );
+          })}
+        </List>
       </Box>
     </>
   );
