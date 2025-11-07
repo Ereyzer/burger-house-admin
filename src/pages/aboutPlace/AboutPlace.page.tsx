@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AboutApi } from '../../api/services/about';
 import {
   Box,
@@ -118,9 +118,7 @@ function AboutPlace() {
 
     aboutApi
       .updateAbout(saveData)
-      .then(data => {
-        console.log(data);
-      })
+      .then()
       .catch(err => {
         console.log(err);
       });
@@ -148,17 +146,28 @@ function AboutPlace() {
       });
   };
   const resetOpeningTime = (dayOfWeek: number) => {
-    setData(prev => ({
-      ...prev,
-      opennigHours: {
-        ...prev.opennigHours,
-        [dayOfWeek]: {
-          dayOfWeek,
-          opensAt: null,
-          closesAt: null,
-        },
-      },
-    }));
+    aboutApi
+      .updateOpenigHours({
+        dayOfWeek,
+        opensAt: null,
+        closesAt: null,
+      })
+      .then(() => {
+        setData(prev => ({
+          ...prev,
+          opennigHours: {
+            ...prev.opennigHours,
+            [dayOfWeek]: {
+              dayOfWeek,
+              opensAt: null,
+              closesAt: null,
+            },
+          },
+        }));
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
   return (
     <>
@@ -265,59 +274,69 @@ function AboutPlace() {
 
         <h2>Години роботи</h2>
         <List>
-          {Object.values(data.opennigHours).map(i => {
-            let day = '';
-            switch (i.dayOfWeek) {
-              case 0:
-                day = 'Неділя';
-                break;
+          {...Object.values(data.opennigHours)
+            .reverse()
+            .reduce((acc, i) => {
+              let day = '';
+              switch (i.dayOfWeek) {
+                case 0:
+                  day = 'Неділя';
+                  break;
 
-              case 1:
-                day = 'Понеділок';
-                break;
+                case 1:
+                  day = 'Понеділок';
+                  break;
 
-              case 2:
-                day = 'Вівторрок';
-                break;
+                case 2:
+                  day = 'Вівторрок';
+                  break;
 
-              case 3:
-                day = 'Середа';
-                break;
+                case 3:
+                  day = 'Середа';
+                  break;
 
-              case 4:
-                day = 'Четвер';
-                break;
+                case 4:
+                  day = 'Четвер';
+                  break;
 
-              case 5:
-                day = "П'ятниця";
-                break;
-              case 6:
-                day = 'Субота';
-                break;
-            }
-            return (
-              <ListItem
-                key={i.dayOfWeek}
-                sx={{ width: '600px', display: 'flex', justifyContent: 'space-between' }}
-              >
-                <Typography sx={{ width: '40px' }}>{day}</Typography>
-                <TextField
-                  type="time"
-                  value={i.opensAt || ''}
-                  label={'З '}
-                  onChange={e => changeOpenHours(e.target.value, i.dayOfWeek)}
-                />
-                <TextField
-                  type="time"
-                  value={i.closesAt || ''}
-                  onChange={e => changeCloseHours(e.target.value, i.dayOfWeek)}
-                  label="По "
-                />
-                <Button onClick={() => resetOpeningTime(i.dayOfWeek)}>Скинути</Button>
-                <Button onClick={() => saveDayOpeningTime(i)}>Зберегти</Button>
-              </ListItem>
-            );
-          })}
+                case 5:
+                  day = "П'ятниця";
+                  break;
+                case 6:
+                  day = 'Субота';
+                  break;
+              }
+
+              const element = (
+                <ListItem
+                  key={i.dayOfWeek}
+                  sx={{ width: '600px', display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <Typography sx={{ width: '40px' }}>{day}</Typography>
+                  <TextField
+                    type="time"
+                    value={i.opensAt || ''}
+                    label={'З '}
+                    onChange={e => changeOpenHours(e.target.value, i.dayOfWeek)}
+                  />
+                  <TextField
+                    type="time"
+                    value={i.closesAt || ''}
+                    onChange={e => changeCloseHours(e.target.value, i.dayOfWeek)}
+                    label="По "
+                  />
+                  <Button onClick={() => resetOpeningTime(i.dayOfWeek)}>Скинути</Button>
+                  <Button onClick={() => saveDayOpeningTime(i)}>Зберегти</Button>
+                </ListItem>
+              );
+
+              if (i.dayOfWeek === 0) {
+                acc.push(element);
+              } else {
+                acc.unshift(element);
+              }
+              return acc;
+            }, [] as React.ReactElement[])}
         </List>
       </Box>
     </>
