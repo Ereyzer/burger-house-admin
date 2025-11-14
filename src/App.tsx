@@ -20,7 +20,12 @@ function App() {
       setIsloading(false);
     }, HelloTime);
   }, []);
-
+  useEffect(() => {
+    if (loading) return;
+    if (!errorMessage) return;
+    console.log('did not login: ', errorMessage);
+    navigate('/login', { replace: true });
+  }, [loading, errorMessage, navigate]);
   useEffect(() => {
     if (!notSend.current) return;
     notSend.current = false;

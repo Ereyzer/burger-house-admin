@@ -36,6 +36,7 @@ const statusButtonText = (status: Status) => {
   }
 };
 const flexBoxStyles = { display: 'flex', justifyContent: 'space-between' };
+
 function FullOrderModal({ order, handleStatus, onClose }: Props) {
   return (
     <Box sx={style}>

@@ -338,6 +338,8 @@ function AboutPlace() {
               return acc;
             }, [] as React.ReactElement[])}
         </List>
+
+        <h2>Ціна доставки</h2>
       </Box>
     </>
   );

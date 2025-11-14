@@ -39,4 +39,11 @@ export class OrdersApi extends BasicApiClass {
       .catch(err => {
         throw err;
       });
+  public getActual = () =>
+    axios
+      .get(`${this.baseUrl}/actual`)
+      .then(({ data }) => data)
+      .catch(err => {
+        throw err;
+      });
 }

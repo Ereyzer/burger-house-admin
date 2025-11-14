@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export class BaseApi {
-  readonly #BASE_URL = 'http://localhost:3000';
+  readonly #BASE_URL = import.meta.env.BASE_URL || 'http://localhost:3000';
   #token: string | null = null;
   #rememberMe = true;
   static #instance: BaseApi | null;

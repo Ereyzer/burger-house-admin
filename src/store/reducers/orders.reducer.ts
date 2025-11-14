@@ -29,7 +29,7 @@ export interface FullOrder {
   selections: Selection[];
 }
 
-interface OrderItem {
+export interface OrderItem {
   id: number;
   status: Status;
   customerName: string;
@@ -81,6 +81,7 @@ export const getAllOrders = createAsyncThunk(
     }
   },
 );
+
 // export const getOrderById = createAsyncThunk(
 //   'menu/getOrderById',
 //   async (data: number, thunkAPI) => {
