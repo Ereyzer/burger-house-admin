@@ -15,11 +15,17 @@ function App() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const notSend = useRef(true);
+  // useEffect(() => {
+  // setTimeout(() => {
+  //   setIsloading(false);
+  // }, HelloTime);
+  // }, []);
   useEffect(() => {
-    setTimeout(() => {
-      setIsloading(false);
-    }, HelloTime);
-  }, []);
+    if (loading) return;
+    if (!errorMessage) return;
+    // console.log('did not login: ', errorMessage);
+    navigate('/login', { replace: true });
+  }, [loading, errorMessage, navigate]);
 
   useEffect(() => {
     if (!notSend.current) return;
@@ -27,13 +33,24 @@ function App() {
     if (loading) return;
     if (!user && !errorMessage) {
       const at = BaseApi.instance.token;
+
       if (!at) {
         navigate('/login', { replace: true });
+        setTimeout(() => {
+          setIsloading(false);
+        }, HelloTime);
       } else {
-        dispatch(getLoggetUser());
+        dispatch(getLoggetUser()).finally(() => {
+          // console.log('test finaly');
+
+          setIsloading(false);
+        });
       }
     } else if (!user) {
       navigate('/login', { replace: true });
+      setTimeout(() => {
+        setIsloading(false);
+      }, HelloTime);
     }
   }, [user, navigate, dispatch, loading, errorMessage]);
 

@@ -9,7 +9,6 @@ export class UserApi {
   constructor() {
     this.#base_instance.refreshFunc = this.refreshToken;
     this.getLoggetUser = this.#base_instance.refreshHelper(this.getLoggetUser);
-    this.#base_instance.getAndUpdateToken();
   }
   //TODO:
   public static get instance() {
@@ -27,6 +26,7 @@ export class UserApi {
     const response = await axios.get(`${this.#baseUrl}/login`, {
       headers: this.#base_instance.getHeaders(),
     });
+
     return response.data;
   };
   public refreshToken = async () => {

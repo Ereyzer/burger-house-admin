@@ -31,8 +31,11 @@ export const loginUser = createAsyncThunk('user/login', async (data: LoginUserDt
 export const getLoggetUser = createAsyncThunk('user/getLogget', async (_, thunkAPI) => {
   try {
     const response = await apiUser.getLoggetUser();
+
     return response;
   } catch (e) {
+    console.log(e);
+
     return thunkAPI.rejectWithValue((e as Error).message);
   }
 });
@@ -74,8 +77,6 @@ const slice = createSlice({
         state.errorMessage = null;
       },
       rejected: (state, action) => {
-        console.log(action);
-
         state.loading = false;
         state.errorMessage = action.payload as string;
         // BaseApi.instance.token = null;

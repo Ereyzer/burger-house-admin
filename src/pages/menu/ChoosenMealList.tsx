@@ -12,7 +12,7 @@ const style: TypographyStyle = {
 const styleListItemTextPrice = { textAlign: 'end' };
 
 interface Meal {
-  id: number;
+  id: string;
   name: string;
   price: number;
 }

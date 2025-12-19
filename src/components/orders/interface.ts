@@ -12,7 +12,7 @@ interface Selection {
 }
 
 export interface FullOrder {
-  id: number;
+  id: string;
   amount: number;
   payment: PaymentMethod;
   phone: string;

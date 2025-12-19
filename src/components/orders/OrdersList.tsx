@@ -6,46 +6,61 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import OrderRow from './orderRow';
 import { OrdersApi } from '../../api/services/orders';
 import type { Status } from './types';
 import FullOrderModal from './fullOrderModal';
 import type { FullOrder } from './interface';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { getAllOrders, updateOrderStatus } from '../../store/reducers/orders.reducer';
-import { socket } from '../../socket/orders';
+import type { OrderItem } from '../../store/reducers/orders.reducer';
+// import { useAppDispatch, useAppSelector } from '../../store';
+// import { getAllOrders, updateOrderStatus } from '../../store/reducers/orders.reducer';
 
 const ordersApi = new OrdersApi();
 
 function OrdersList() {
-  const { orders } = useAppSelector(state => state.orders);
-  const dispatch = useAppDispatch();
-  const [perPage, setPerPage] = useState(10);
-  const [page, setPage] = useState(1);
+  // const { orders, loaded } = useAppSelector(state => state.orders);
+  const [orders, setOrders] = useState<OrderItem[]>([]);
+  // const dispatch = useAppDispatch();
+  // const [perPage, setPerPage] = useState(10);
+  // const [page, setPage] = useState(1);
   const [openOrder, setOpenOrder] = useState<null | FullOrder>(null);
+  // const isFirstLoad = useRef(true);
+
+  // useEffect(() => {
+  //   dispatch(getAllOrders({ page, perPage }));
+  // }, [page, perPage, dispatch]);
 
   useEffect(() => {
-    dispatch(getAllOrders({ page, perPage }));
-  }, [page, perPage, dispatch]);
-
-  useEffect(() => {
-    socket.connect();
+    // if (!isFirstLoad.current) return;
+    // isFirstLoad.current = false;
+    const interval = setInterval(() => {
+      ordersApi.getActual().then(data => {
+        setOrders(data);
+      });
+    }, 12000);
+    ordersApi.getActual().then(data => {
+      setOrders(data);
+    });
 
     return () => {
-      socket.disconnect();
+      // if (isFirstLoad.current) {
+      //   isFirstLoad.current = false;
+      //   return;
+      // }
+      clearInterval(interval);
     };
   }, []);
-  const handleChangePerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPerPage(parseInt(event.target.value));
-  };
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-  const clickOnRow = (id: number) => {
+
+  // const handleChangePerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setPerPage(parseInt(event.target.value));
+  // };
+  // const handleChangePage = (_event: unknown, newPage: number) => {
+  //   setPage(newPage);
+  // };
+  const clickOnRow = (id: string) => {
     ordersApi
       .getOneById(id)
       .then(res => {
@@ -58,14 +73,28 @@ function OrdersList() {
     setOpenOrder(null);
   };
 
-  const handleStatus = (id: number, status: Status) => {
-    dispatch(updateOrderStatus({ id, status })).then(res => {
-      if (res.meta.requestStatus === 'fulfilled') {
-        setOpenOrder(prev => {
-          if (!prev) return null;
-          return { ...prev, status };
-        });
-      }
+  const handleStatus = (id: string, status: Status) => {
+    // dispatch(updateOrderStatus({ id, status })).then(res => {
+    // if (res.meta.requestStatus === 'fulfilled') {
+    //   setOpenOrder(prev => {
+    //     if (!prev) return null;
+    //     return { ...prev, status };
+    //   });
+    //   }
+    // });
+    ordersApi.changeOrderStatus(id, status).then(() => {
+      setOpenOrder(prev => {
+        if (!prev) return null;
+        return { ...prev, status };
+      });
+      setOrders(prev =>
+        [...prev].map(order => {
+          if (order.id !== id) return order;
+
+          order.status = status;
+          return order;
+        }),
+      );
     });
   };
 
@@ -108,7 +137,7 @@ function OrdersList() {
               phone={orders[0].phone}
             />
           )} */}
-              {orders.items.map((order, index) => (
+              {orders.map((order, index) => (
                 <OrderRow
                   key={index}
                   id={order.id}
@@ -123,7 +152,7 @@ function OrdersList() {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
+        {/* <TablePagination
           rowsPerPageOptions={[1, 5, 10, 25, 50, 100]}
           component="div"
           count={orders.totalItems}
@@ -131,7 +160,7 @@ function OrdersList() {
           page={orders.page}
           onRowsPerPageChange={handleChangePerPage}
           onPageChange={handleChangePage}
-        />
+        /> */}
       </Paper>
       {openOrder && (
         <Modal open={!!openOrder} onClose={handleCloseOrderModal}>

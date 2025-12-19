@@ -59,9 +59,9 @@ function AddMenuItemModal({ isOpen = true, handleClose }: Props) {
   const [description, setDescription] = useState('');
   const [calories, setCalories] = useState(0);
   const [categories, setCategories] = useState<string[]>([]);
-  const [drinks, setDrinks] = useState<number[]>([]);
+  const [drinks, setDrinks] = useState<string[]>([]);
   const [totalDrinksPrice, setTotalDrinksPrice] = useState(0);
-  const [dishes, setDishes] = useState<number[]>([]);
+  const [dishes, setDishes] = useState<string[]>([]);
   const [totalDishPrice, setTotalDishPrice] = useState(0);
 
   const dispatch = useAppDispatch();

@@ -3,7 +3,7 @@ import { DishApi } from '../../api/services/dishes';
 import type { CreateDishDto } from '../../dto/dish.dto';
 
 interface Item {
-  id: number;
+  id: string;
   name: string;
   price: number;
   calories: number;
@@ -35,7 +35,7 @@ export const getAllDishes = createAsyncThunk('dish/getAll', async (_, thunkAPI) 
 
 export const updateDishPrice = createAsyncThunk(
   'dish/updatePrice',
-  async ({ id, price }: { id: number; price: number }, thunkAPI) => {
+  async ({ id, price }: { id: string; price: number }, thunkAPI) => {
     try {
       return await dishApi.updatePrice(id, price);
     } catch (e) {
@@ -54,9 +54,9 @@ export const addDish = createAsyncThunk('dish/add', async (data: CreateDishDto, 
   }
 });
 
-export const rmDish = createAsyncThunk('dish/rmDrink', async (data: number, thunkAPI) => {
+export const rmDish = createAsyncThunk('dish/rmDrink', async (id: string, thunkAPI) => {
   try {
-    return await dishApi.rmItem(data);
+    return await dishApi.rmItem(id);
   } catch (e) {
     return thunkAPI.rejectWithValue((e as Error).message);
   }

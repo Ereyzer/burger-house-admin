@@ -28,7 +28,7 @@ export class OrdersApi extends BasicApiClass {
       });
   };
 
-  public changeOrderStatus = (id: number, status: Status) =>
+  public changeOrderStatus = (id: string, status: Status) =>
     axios
       .patch(
         `${this.baseUrl}/status/${id}`,
@@ -36,6 +36,13 @@ export class OrdersApi extends BasicApiClass {
         { headers: this.baseInstance.getHeaders() },
       )
       .then(res => res.data)
+      .catch(err => {
+        throw err;
+      });
+  public getActual = () =>
+    axios
+      .get(`${this.baseUrl}/actual`, { headers: this.baseInstance.getHeaders() })
+      .then(({ data }) => data)
       .catch(err => {
         throw err;
       });

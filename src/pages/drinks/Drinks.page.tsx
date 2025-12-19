@@ -26,7 +26,7 @@ import AddDrinkModal from './AddDrinkModal';
 function Drinks() {
   const { items, loading, loaded } = useAppSelector(state => state.drinks);
   const dispatch = useAppDispatch();
-  const [prices, setPrices] = useState<{ [v: number]: number }>({});
+  const [prices, setPrices] = useState<{ [v: string]: number }>({});
   const [dialogOpen, setDialogOpen] = useState<{
     open: boolean;
     title: string;
@@ -70,7 +70,7 @@ function Drinks() {
     setPrices(obj);
   }, [items]);
 
-  const removeDrink = (id: number) => {
+  const removeDrink = (id: string) => {
     const handleRemoveDrink = () => {
       dispatch(rmDrink(id));
     };
@@ -84,7 +84,7 @@ function Drinks() {
     }));
   };
 
-  const changePrice = (id: number) => {
+  const changePrice = (id: string) => {
     const handleChangePrice = () => {
       dispatch(updateDrinkPrice({ id, price: prices[id] }));
     };

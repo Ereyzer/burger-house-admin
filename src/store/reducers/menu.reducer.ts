@@ -3,7 +3,7 @@ import { MenuApi } from '../../api/services/menu';
 import type { AddMenuItemDto, UpdateMenuItemDto } from '../../dto/addMenuItem.dto';
 
 interface Item {
-  id: number;
+  id: string;
   title: string;
   subtitle: string;
   price: number;
@@ -36,7 +36,7 @@ export const getAllMenu = createAsyncThunk('menu/getAll', async (_, thunkAPI) =>
 
 export const switchOnboard = createAsyncThunk(
   'menu/switchOnboard',
-  async (data: { id: number }, thunkAPI) => {
+  async (data: { id: string }, thunkAPI) => {
     try {
       return await menuApi.changeOnboard(data.id);
     } catch (e) {
@@ -47,7 +47,7 @@ export const switchOnboard = createAsyncThunk(
 
 export const updatemenuItemPrice = createAsyncThunk(
   'menu/updatePrice',
-  async ({ id, price }: { id: number; price: number }, thunkAPI) => {
+  async ({ id, price }: { id: string; price: number }, thunkAPI) => {
     try {
       return await menuApi.updatePrice(id, price);
     } catch (e) {
@@ -56,9 +56,9 @@ export const updatemenuItemPrice = createAsyncThunk(
   },
 );
 
-export const rmMenuItem = createAsyncThunk('menu/rmItem', async (data: number, thunkAPI) => {
+export const rmMenuItem = createAsyncThunk('menu/rmItem', async (id: string, thunkAPI) => {
   try {
-    return await menuApi.rmItem(data);
+    return await menuApi.rmItem(id);
   } catch (e) {
     return thunkAPI.rejectWithValue((e as Error).message);
   }
@@ -165,10 +165,9 @@ const slice = createSlice({
     });
     bilder.addAsyncThunk(updateMenuItem, {
       pending: pendingCalback<typeof initialState>(),
-      fulfilled: (state, action) => {
+      fulfilled: state => {
         state.loading = false;
         state.errorMessage = null;
-        console.log(action);
 
         // state.items
       },

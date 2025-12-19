@@ -25,7 +25,7 @@ import AddDishModal from './AddDishModal';
 
 function Dishes() {
   const { items, loaded, loading } = useAppSelector(state => state.dishes);
-  const [prices, setPrices] = useState<{ [key: number]: number }>({});
+  const [prices, setPrices] = useState<{ [key: string]: number }>({});
   const [dialogOpen, setDialogOpen] = useState<{
     open: boolean;
     title: string;
@@ -70,7 +70,7 @@ function Dishes() {
     setPrices(obj);
   }, [items]);
 
-  const changePrice = (id: number) => {
+  const changePrice = (id: string) => {
     const handleChangePrice = () => {
       dispatch(updateDishPrice({ id, price: prices[id] }));
     };
@@ -84,7 +84,7 @@ function Dishes() {
     }));
   };
 
-  const removeDish = (id: number) => {
+  const removeDish = (id: string) => {
     const handleRemove = () => {
       dispatch(rmDish(id));
     };

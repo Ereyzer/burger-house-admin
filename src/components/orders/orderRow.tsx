@@ -8,13 +8,13 @@ import { orderTimeAgo } from './helpers/orderredTimeAgo';
 import { showMinuts } from './helpers/showMinuts';
 
 interface Props {
-  id: number;
+  id: string;
   status: Status;
   customerName: string;
   phone: string;
   isDelivery: boolean;
   orderedAt: Date;
-  clickOnRow: (id: number) => void;
+  clickOnRow: (id: string) => void;
 }
 function OrderRow({ id, isDelivery, orderedAt, phone, customerName, status, clickOnRow }: Props) {
   const ordered = useMemo(() => new Date(orderedAt), [orderedAt]);

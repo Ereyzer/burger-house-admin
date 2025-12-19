@@ -8,7 +8,7 @@ import { MenuApi } from '../../api/services/menu';
 interface Props {
   imgUrl: null | string;
   name: string;
-  itemId: number;
+  itemId: string;
 }
 
 const VisuallyHiddenInput = styled('input')({

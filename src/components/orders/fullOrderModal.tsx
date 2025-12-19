@@ -4,7 +4,7 @@ import type { Status } from './types';
 
 interface Props {
   order: FullOrder;
-  handleStatus: (id: number, status: Status) => void;
+  handleStatus: (id: string, status: Status) => void;
   onClose: () => void;
 }
 
@@ -36,6 +36,7 @@ const statusButtonText = (status: Status) => {
   }
 };
 const flexBoxStyles = { display: 'flex', justifyContent: 'space-between' };
+
 function FullOrderModal({ order, handleStatus, onClose }: Props) {
   return (
     <Box sx={style}>
@@ -79,21 +80,23 @@ function FullOrderModal({ order, handleStatus, onClose }: Props) {
       </Box>
       <Box sx={flexBoxStyles}>
         <Button onClick={onClose}>Закрити</Button>
-        <Button
-          variant="contained"
-          onClick={() =>
-            handleStatus(
-              order.id,
-              (order.status === 'pending' && 'processing') ||
-                (order.status === 'processing' && 'shipped') ||
-                (order.status === 'shipped' && 'delivered') ||
-                'cancelled',
-            )
-          }
-          disabled={order.status === 'delivered' || order.status === 'cancelled'}
-        >
-          {statusButtonText(order.status)}
-        </Button>
+        {order.status !== 'delivered' && (
+          <Button
+            variant="contained"
+            onClick={() =>
+              handleStatus(
+                order.id,
+                (order.status === 'pending' && 'processing') ||
+                  (order.status === 'processing' && 'shipped') ||
+                  (order.status === 'shipped' && 'delivered') ||
+                  'cancelled',
+              )
+            }
+            // disabled={order.status === 'delivered' || order.status === 'cancelled'}
+          >
+            {statusButtonText(order.status)}
+          </Button>
+        )}
         <Button onClick={onClose} disabled={true}>
           Відміна
         </Button>
