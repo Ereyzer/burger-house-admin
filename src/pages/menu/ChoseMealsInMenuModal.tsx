@@ -33,15 +33,15 @@ const style = {
   overflow: 'scroll',
 };
 interface Meal {
-  id: number;
+  id: string;
   name: string;
   price: number;
 }
 interface Props {
   buttonName: string;
   mealList: Meal[];
-  setCheckedList: (list: number[]) => void;
-  checkedList: number[];
+  setCheckedList: (list: string[]) => void;
+  checkedList: string[];
   addTotal: (price: number) => void;
   minusTotal: (price: number) => void;
   total: number;
@@ -49,7 +49,7 @@ interface Props {
 
 function ChooseMealsInMenuModal(props: Props) {
   const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState<number[]>(() => props.checkedList.map(id => id));
+  const [checked, setChecked] = useState<string[]>(() => props.checkedList.map(id => id));
 
   const handleOpen = () => {
     setOpen(true);
@@ -59,7 +59,7 @@ function ChooseMealsInMenuModal(props: Props) {
     setOpen(false);
   };
 
-  const handleToggle = (value: number, price: number) => () => {
+  const handleToggle = (value: string, price: number) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 

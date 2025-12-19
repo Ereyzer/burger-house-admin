@@ -35,7 +35,7 @@ const style = {
 export interface Props {
   isOpen: boolean;
   onClose: () => void;
-  itemId: number;
+  itemId: string;
 }
 interface Category {
   id: string;
@@ -44,7 +44,7 @@ interface Category {
 }
 // {"id":1,"name":"Coka Cola 0.5","price":19.99,"calories":100,"description":null}
 interface MenuItem {
-  id: number;
+  id: string;
   title: string;
   subtitle: string;
   price: number;
@@ -52,8 +52,8 @@ interface MenuItem {
   calories: number;
   categories: Category[];
   image_medium: string | null;
-  dishes: { id: number }[];
-  drinks: { id: number }[];
+  dishes: { id: string }[];
+  drinks: { id: string }[];
 }
 
 const menuApi = new MenuApi();
@@ -79,9 +79,9 @@ const handleCategoryUpdate =
   };
 
 const handleMealUpdate =
-  (items: { id: number }[], addItem: (id: number) => void, rmItem: (id: number) => void) =>
-  (arr: number[]) => {
-    const sameId: number[] = [];
+  (items: { id: string }[], addItem: (id: string) => void, rmItem: (id: string) => void) =>
+  (arr: string[]) => {
+    const sameId: string[] = [];
     items.forEach(item => {
       if (arr.includes(item.id)) {
         sameId.push(item.id);
@@ -100,7 +100,7 @@ const handleMealUpdate =
 
 function UpdateMenuItemModal({ isOpen, onClose, itemId }: Props) {
   const [item, setItem] = useState<MenuItem>({
-    id: 0,
+    id: '',
     title: '',
     subtitle: '',
     price: 0,
@@ -114,10 +114,10 @@ function UpdateMenuItemModal({ isOpen, onClose, itemId }: Props) {
   const categoryList = useAppSelector(state => state.categories);
   const [categories, setCategories] = useState<string[]>([]);
   const drinkList = useAppSelector(state => state.drinks);
-  const [drinks, setDrinks] = useState<number[]>([]);
+  const [drinks, setDrinks] = useState<string[]>([]);
   const [totalDrinksPrice, setTotalDrinksPrice] = useState(0);
   const dishList = useAppSelector(state => state.dishes);
-  const [dishes, setDishes] = useState<number[]>([]);
+  const [dishes, setDishes] = useState<string[]>([]);
   const [totalDishesPrice, setTotalDishesPrice] = useState(0);
 
   const addCategory = (category: string) => {
@@ -147,7 +147,7 @@ function UpdateMenuItemModal({ isOpen, onClose, itemId }: Props) {
     });
   };
 
-  const addDrinks = (drinkId: number) => {
+  const addDrinks = (drinkId: string) => {
     menuApi.addDrink(itemId, drinkId).then(data => {
       if (!data.affected) return;
 
@@ -163,7 +163,7 @@ function UpdateMenuItemModal({ isOpen, onClose, itemId }: Props) {
     });
   };
 
-  const rmDrinks = (drinkId: number) => {
+  const rmDrinks = (drinkId: string) => {
     menuApi.rmDrink(itemId, drinkId).then(data => {
       if (!data.affected) return;
       setItem(obj => {
@@ -177,7 +177,7 @@ function UpdateMenuItemModal({ isOpen, onClose, itemId }: Props) {
     });
   };
 
-  const addDishes = (dishId: number) => {
+  const addDishes = (dishId: string) => {
     menuApi.addDish(itemId, dishId).then(data => {
       if (!data.affected) return;
 
@@ -193,7 +193,7 @@ function UpdateMenuItemModal({ isOpen, onClose, itemId }: Props) {
     });
   };
 
-  const rmDishes = (dishId: number) => {
+  const rmDishes = (dishId: string) => {
     menuApi.rmDish(itemId, dishId).then(data => {
       if (!data.affected) return;
       setItem(obj => {
@@ -209,10 +209,8 @@ function UpdateMenuItemModal({ isOpen, onClose, itemId }: Props) {
 
   useEffect(() => {
     (async () => {
-      console.log('out');
 
       if (!itemId) return;
-      console.log('in');
 
       const data = await menuApi.getOneById(itemId);
       setItem(() => ({ ...data }));

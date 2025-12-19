@@ -40,10 +40,18 @@ function OrdersList() {
       ordersApi.getActual().then(data => {
         setOrders(data);
       });
-      return () => {
-        clearInterval(interval);
-      };
-    }, 2000);
+    }, 12000);
+    ordersApi.getActual().then(data => {
+      setOrders(data);
+    });
+
+    return () => {
+      // if (isFirstLoad.current) {
+      //   isFirstLoad.current = false;
+      //   return;
+      // }
+      clearInterval(interval);
+    };
   }, []);
 
   // const handleChangePerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +60,7 @@ function OrdersList() {
   // const handleChangePage = (_event: unknown, newPage: number) => {
   //   setPage(newPage);
   // };
-  const clickOnRow = (id: number) => {
+  const clickOnRow = (id: string) => {
     ordersApi
       .getOneById(id)
       .then(res => {
@@ -65,7 +73,7 @@ function OrdersList() {
     setOpenOrder(null);
   };
 
-  const handleStatus = (id: number, status: Status) => {
+  const handleStatus = (id: string, status: Status) => {
     // dispatch(updateOrderStatus({ id, status })).then(res => {
     // if (res.meta.requestStatus === 'fulfilled') {
     //   setOpenOrder(prev => {
@@ -81,7 +89,7 @@ function OrdersList() {
       });
       setOrders(prev =>
         [...prev].map(order => {
-          if (order.id !== Number(id)) return order;
+          if (order.id !== id) return order;
 
           order.status = status;
           return order;

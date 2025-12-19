@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export class BaseApi {
-  readonly #BASE_URL = import.meta.env.BASE_URL || 'http://localhost:3000';
+  readonly #BASE_URL = import.meta.env.VITE_BASE_API_URL || 'http://localhost:3000';
   #token: string | null = null;
   #rememberMe = true;
   static #instance: BaseApi | null;
@@ -56,24 +56,20 @@ export class BaseApi {
 
   public getAndUpdateToken = async () => {
     this.getTokenFromStorage();
-    console.log(1);
 
     if (!this.#token) return;
     const leftMs: number | false = this.isTimeToExpirationToken(this.#token);
-    console.log(2);
 
     if (!leftMs) {
       clearTimeout(this.#timeoutTokenUpdate);
       await this.refreshAndUpdateToken();
       this.#timeoutTokenUpdate = setTimeout(() => {
-        console.log(leftMs, ' koma ', 2);
 
         this.getAndUpdateToken();
       }, 14 * 60 * 1000);
     } else {
       clearTimeout(this.#timeoutTokenUpdate);
       this.#timeoutTokenUpdate = setTimeout(async () => {
-        console.log(leftMs, ' bez ', 2);
         this.getAndUpdateToken();
       }, leftMs);
     }
@@ -110,13 +106,13 @@ export class BaseApi {
       sessionStorage.setItem('at', at);
     }
   };
-  public refreshHelper = <F extends (...args: Parameters<F>) => Promise<ReturnType<F>>>(
-    func: F,
-  ) => {
-    return async (...args: Parameters<F>): Promise<ReturnType<F>> => {
+  public refreshHelper = <A extends unknown[], R>(func: (...args: A) => Promise<R>) => {
+    return async (...args: A): Promise<R> => {
       try {
         return await func(...args);
       } catch (error) {
+        console.log(error);
+
         if (!this.#refreshFunc) throw error;
         const { statusCode } = (error as { response: { data: { statusCode: number } } } & Error)
           .response.data;
@@ -190,7 +186,7 @@ export class BasicApiClass {
   //     });
   // };
 
-  public getOneById = (id: number) =>
+  public getOneById = (id: string) =>
     axios
       .get(`${this.baseUrl}/${id}`, { headers: this.baseInstance.getHeaders() })
       .then(res => res.data)
@@ -198,7 +194,7 @@ export class BasicApiClass {
         throw err;
       });
 
-  public updatePrice = (id: number, price: number) =>
+  public updatePrice = (id: string, price: number) =>
     axios
       .patch(`${this.baseUrl}/price/${id}`, { price }, { headers: this.baseInstance.getHeaders() })
       .then(res => res.data)
@@ -206,7 +202,7 @@ export class BasicApiClass {
         throw err;
       });
 
-  public updateItem = <T extends object>(id: number, data: T) =>
+  public updateItem = <T extends object>(id: string, data: T) =>
     axios
       .patch(`${this.baseUrl}/${id}`, data, { headers: this.baseInstance.getHeaders() })
       .then(res => res.data)
@@ -222,7 +218,7 @@ export class BasicApiClass {
         throw err;
       });
 
-  public rmItem = (id: number) =>
+  public rmItem = (id: string) =>
     axios
       .delete(`${this.baseUrl}/${id}`, { headers: this.baseInstance.getHeaders() })
       .then(res => res.data)

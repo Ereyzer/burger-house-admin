@@ -6,23 +6,20 @@ import {
   DialogContentText,
   DialogTitle,
   OutlinedInput,
-} from "@mui/material";
-import type React from "react";
+} from '@mui/material';
+import type React from 'react';
 
 interface ForgotPasswordProps {
   open: boolean;
   handleClose: () => void;
 }
-export default function ForgotPassword({
-  open,
-  handleClose,
-}: ForgotPasswordProps) {
+export default function ForgotPassword({ open, handleClose }: ForgotPasswordProps) {
   const sendEmail = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
+    // const formData = new FormData(event.currentTarget);
+    // const email = formData.get("email");
     // TODO: send reset password
-    console.log(email);
+    // console.log(email);
     handleClose();
   };
   return (
@@ -31,16 +28,14 @@ export default function ForgotPassword({
       onClose={handleClose}
       slotProps={{
         paper: {
-          component: "form",
+          component: 'form',
           onSubmit: sendEmail,
-          sx: { backgroundImage: "none" },
+          sx: { backgroundImage: 'none' },
         },
       }}
     >
       <DialogTitle>Відновити Пароль</DialogTitle>
-      <DialogContent
-        sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}
-      >
+      <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}>
         <DialogContentText>
           Введіть ваш емеіл і ми звяжемося з вами для відновлення доступу.
         </DialogContentText>

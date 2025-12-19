@@ -6,12 +6,12 @@ export interface AddMenuItemDto {
   description?: string;
   calories?: number;
   categories: string[];
-  drinks: number[];
-  dishes: number[];
+  drinks: string[];
+  dishes: string[];
 }
 
 export interface UpdateMenuItemDto {
-  id: number;
+  id: string;
   title: string;
   subtitle: string;
   price: number;

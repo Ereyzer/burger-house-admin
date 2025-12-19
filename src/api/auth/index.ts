@@ -26,6 +26,7 @@ export class UserApi {
     const response = await axios.get(`${this.#baseUrl}/login`, {
       headers: this.#base_instance.getHeaders(),
     });
+
     return response.data;
   };
   public refreshToken = async () => {

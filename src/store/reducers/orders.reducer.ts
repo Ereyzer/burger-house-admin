@@ -30,7 +30,7 @@ export interface FullOrder {
 }
 
 export interface OrderItem {
-  id: number;
+  id: string;
   status: Status;
   customerName: string;
   phone: string;
@@ -94,7 +94,7 @@ export const getAllOrders = createAsyncThunk(
 // );
 export const updateOrderStatus = createAsyncThunk(
   'menu/updateOrderStatus',
-  async ({ id, status }: { id: number; status: Status }, thunkAPI) => {
+  async ({ id, status }: { id: string; status: Status }, thunkAPI) => {
     try {
       return ordersApi.changeOrderStatus(id, status);
     } catch (e) {
@@ -138,27 +138,17 @@ const slice = createSlice({
     builder.addAsyncThunk(updateOrderStatus, {
       pending: pendingCalback<typeof initialState>(),
       fulfilled: (state, action) => {
-        const { id, status } = action.payload as { id: number; status: Status };
+        const { id, status } = action.payload as { id: string; status: Status };
 
         state.loaded = true;
         state.loading = false;
         state.errorMessage = null;
         state.orders.items = state.orders.items.map(order => {
-          if (order.id !== Number(id)) return order;
+          if (order.id !== id) return order;
 
           order.status = status;
           return order;
         });
-        // state.orders = {
-        //   ...state.orders,
-        //   items: state.orders.items.map(order => {
-        //     if (order.id !== id) return order;
-        //     console.log(status, id);
-
-        //     order.status = status;
-        //     return order;
-        //   }),
-        // };
       },
       rejected: rejectedCalback,
     });

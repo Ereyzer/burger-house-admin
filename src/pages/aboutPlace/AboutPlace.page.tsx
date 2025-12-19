@@ -15,7 +15,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import type { OpenDay } from './interface';
+import type { BrakeTime, DeliveryPrice, OpenDay } from './interface';
+import BrakeTimesList from './BrakeTimesList';
+import DeliveryPriceList from './deliveryPrices';
 
 interface AboutData {
   id?: number;
@@ -25,7 +27,9 @@ interface AboutData {
   phone: string;
   placeDescription: string;
   placeAddress: string;
-  opennigHours: { [key: number]: OpenDay };
+  openningHours: { [key: number]: OpenDay };
+  brakeTimes: { workDate: string; closesAt: string; opensAt: string; id: string }[];
+  deliveryPrices: DeliveryPrice[];
 }
 const defoultOpennigHoursArr: OpenDay[] = [
   { dayOfWeek: 0, opensAt: null, closesAt: null },
@@ -53,7 +57,9 @@ function AboutPlace() {
     phone: '',
     placeDescription: '',
     placeAddress: '',
-    opennigHours: { 0: defoultOpennigHoursArr[0] },
+    openningHours: { 0: defoultOpennigHoursArr[0] },
+    brakeTimes: [],
+    deliveryPrices: [],
   });
 
   const notfirstRequest = useRef(true);
@@ -80,6 +86,8 @@ function AboutPlace() {
     aboutApi
       .getAbout()
       .then(data => {
+        // console.log(data);
+
         return (
           data &&
           setData(prev => ({
@@ -90,10 +98,12 @@ function AboutPlace() {
             phone: data.phone || '',
             placeDescription: data.placeDescription || '',
             placeAddress: data.placeAddress || '',
-            opennigHours: [...data.openningHours].reduce((acc, item) => {
+            openningHours: [...data.openningHours].reduce((acc, item) => {
               acc = { ...acc, [item.dayOfWeek]: item };
               return acc;
             }, {}),
+            brakeTimes: data.brakeTimes,
+            deliveryPrices: data.deliveryPrices,
           }))
         );
       })
@@ -127,13 +137,13 @@ function AboutPlace() {
   const changeOpenHours = (value: string, id: number) => {
     setData(prev => ({
       ...prev,
-      opennigHours: { ...prev.opennigHours, [id]: { ...prev.opennigHours[id], opensAt: value } },
+      opennigHours: { ...prev.openningHours, [id]: { ...prev.openningHours[id], opensAt: value } },
     }));
   };
   const changeCloseHours = (value: string, id: number) => {
     setData(prev => ({
       ...prev,
-      opennigHours: { ...prev.opennigHours, [id]: { ...prev.opennigHours[id], closesAt: value } },
+      opennigHours: { ...prev.openningHours, [id]: { ...prev.openningHours[id], closesAt: value } },
     }));
   };
 
@@ -156,7 +166,7 @@ function AboutPlace() {
         setData(prev => ({
           ...prev,
           opennigHours: {
-            ...prev.opennigHours,
+            ...prev.openningHours,
             [dayOfWeek]: {
               dayOfWeek,
               opensAt: null,
@@ -169,6 +179,53 @@ function AboutPlace() {
         console.log(err);
       });
   };
+
+  const addBrakeTime = (brakeTime: Omit<BrakeTime, 'id'>) => {
+    const testValues = Object.values(brakeTime);
+    if (testValues.includes('')) return;
+    aboutApi
+      .addBrakeTime(brakeTime)
+      .then(data => {
+        setData(prev => ({ ...prev, brakeTimes: [data, ...prev.brakeTimes] }));
+      })
+      .catch();
+  };
+
+  const rmBrakeTime = (id: string) => {
+    aboutApi
+      .rmBrakeTime(id)
+      .then(() => {
+        setData(prev => ({
+          ...prev,
+          brakeTimes: [...prev.brakeTimes].filter(item => item.id !== id),
+        }));
+      })
+      .catch();
+  };
+
+  const addDeliveryPrice = (newPrice: Omit<DeliveryPrice, 'id'>) => {
+    aboutApi
+      .addDeliveryPrice(newPrice)
+      .then(resp => {
+        setData(prev => ({
+          ...prev,
+          deliveryPrices: [resp, ...prev.deliveryPrices].sort((a, b) => a.distance - b.distance),
+        }));
+      })
+      .catch();
+  };
+  const rmDeliveryPrice = (id: string) => {
+    aboutApi
+      .rmDeliveryPrices(id)
+      .then(() => {
+        setData(prev => ({
+          ...prev,
+          deliveryPrices: [...prev.deliveryPrices].filter(a => a.id !== id),
+        }));
+      })
+      .catch();
+  };
+
   return (
     <>
       <Box>
@@ -274,7 +331,7 @@ function AboutPlace() {
 
         <h2>Години роботи</h2>
         <List>
-          {...Object.values(data.opennigHours)
+          {...Object.values(data.openningHours)
             .reverse()
             .reduce((acc, i) => {
               let day = '';
@@ -338,8 +395,19 @@ function AboutPlace() {
               return acc;
             }, [] as React.ReactElement[])}
         </List>
+        <h2>Перерви</h2>
+        <BrakeTimesList
+          items={data.brakeTimes}
+          addBrakeTime={addBrakeTime}
+          rmBrakeTime={rmBrakeTime}
+        />
 
         <h2>Ціна доставки</h2>
+        <DeliveryPriceList
+          prices={data.deliveryPrices}
+          addDeliveryPrice={addDeliveryPrice}
+          rmDeliveryPrice={rmDeliveryPrice}
+        />
       </Box>
     </>
   );

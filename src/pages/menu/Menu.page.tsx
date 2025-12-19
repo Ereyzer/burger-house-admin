@@ -22,6 +22,7 @@ import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRou
 import AddMenuItemModal from './AddMenuItemModal';
 import UpdateMenuItemModal from './UpdateMenuItemModal';
 import type { PropsOf } from '@emotion/react';
+// import BeforeDeleteDialog from '../../components/agreeDialog/BeforeDeleteDialog';
 
 function Menu() {
   const { items, loading, loaded } = useAppSelector(state => state.menu);
@@ -40,14 +41,16 @@ function Menu() {
   const [updateMenuProps, setUpdateMenuProps] = useState<PropsOf<typeof UpdateMenuItemModal>>({
     isOpen: true,
     onClose: () => {
-      setUpdateMenuProps(p => ({ ...p, isOpen: false, itemId: 0 }));
+      setUpdateMenuProps(p => ({ ...p, isOpen: false, itemId: '' }));
     },
-    itemId: 0,
+    itemId: '',
   });
+  // const [isRemoving, setIsRemoving] = useState(false);
+  // const [removingId, setRemovingId] = useState<string | null>(null);
 
   const dispatch = useAppDispatch();
 
-  const openUpdateMenuItemModal = (itemId: number) => {
+  const openUpdateMenuItemModal = (itemId: string) => {
     setUpdateMenuProps(p => ({ ...p, isOpen: true, itemId }));
   };
   useEffect(() => {
@@ -59,7 +62,7 @@ function Menu() {
     setAddItemModalOpen(false);
   };
 
-  const handleSwitchOnboard = (id: number) => {
+  const handleSwitchOnboard = (id: string) => {
     dispatch(switchOnboard({ id }));
   };
 
@@ -73,7 +76,7 @@ function Menu() {
     }));
   };
 
-  const removeItem = (id: number) => {
+  const removeItem = (id: string) => {
     const handleRemoveDrink = () => {
       dispatch(rmMenuItem(id));
     };
@@ -115,6 +118,22 @@ function Menu() {
     }
   }, [dialogOpen, observer, loading]);
 
+  // const handleOpen = (id: string) => {
+  //   setRemovingId(id);
+  //   setIsRemoving(true);
+  // };
+
+  // const handleClose = () => {
+  //   setRemovingId(null);
+  //   setIsRemoving(false);
+  // };
+
+  // const handleDelete = () => {
+  //   if (removingId === null) return;
+
+  //   rmDeliveryPrice(removingId);
+  //   handleClose();
+  // };
   return (
     <>
       <TableContainer>
@@ -197,6 +216,12 @@ function Menu() {
           itemId={updateMenuProps.itemId}
         />
       )}
+      {/* <BeforeDeleteDialog
+        open={isRemoving}
+        handleApprove={handleDelete}
+        onClose={handleClose}
+        title="Зона доставки"
+      /> */}
     </>
   );
 }
