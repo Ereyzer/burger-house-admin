@@ -6,6 +6,7 @@ export class OrdersApi extends BasicApiClass {
   constructor() {
     super();
     this.baseUrl = 'admin/orders';
+    this.getActual = this.baseInstance.refreshHelper(this.getActual);
   }
 
   public getAllOrders = async (page?: number, perPage?: number) => {
