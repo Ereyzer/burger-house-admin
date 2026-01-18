@@ -40,7 +40,7 @@ function OrdersList() {
       ordersApi.getActual().then(data => {
         setOrders(data);
       });
-    }, 120000);
+    }, 300000); //300000
     if (!isFirstLoad.current) return;
     isFirstLoad.current = false;
     ordersApi.getActual().then(data => {
