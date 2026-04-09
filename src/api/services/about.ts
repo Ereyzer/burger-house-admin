@@ -2,7 +2,7 @@ import axios from 'axios';
 import { BasicApiClass } from '../initial-class';
 import type { BrakeTime, DeliveryPrice, OpenDay } from '../../pages/aboutPlace/interface';
 
-interface AboutData {
+export interface AboutData {
   id?: number;
   facebook: string;
   instagram: string;
@@ -13,6 +13,7 @@ interface AboutData {
   openningHours: OpenDay[];
   brakeTimes: BrakeTime[];
   deliveryPrices: DeliveryPrice[];
+  deliveryOn: boolean;
 }
 export class AboutApi extends BasicApiClass {
   constructor() {

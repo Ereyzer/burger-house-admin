@@ -63,10 +63,12 @@ export class BaseApi {
     if (!leftMs) {
       clearTimeout(this.#timeoutTokenUpdate);
       await this.refreshAndUpdateToken();
-      this.#timeoutTokenUpdate = setTimeout(() => {
-
-        this.getAndUpdateToken();
-      }, 14 * 60 * 1000);
+      this.#timeoutTokenUpdate = setTimeout(
+        () => {
+          this.getAndUpdateToken();
+        },
+        14 * 60 * 1000,
+      );
     } else {
       clearTimeout(this.#timeoutTokenUpdate);
       this.#timeoutTokenUpdate = setTimeout(async () => {
