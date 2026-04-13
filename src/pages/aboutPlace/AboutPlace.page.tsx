@@ -3,11 +3,14 @@ import { AboutApi } from '../../api/services/about';
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControlLabel,
+  FormGroup,
   List,
   ListItem,
   ListItemButton,
@@ -30,6 +33,7 @@ interface AboutData {
   openningHours: { [key: number]: OpenDay };
   brakeTimes: { workDate: string; closesAt: string; opensAt: string; id: string }[];
   deliveryPrices: DeliveryPrice[];
+  deliveryOn: boolean;
 }
 const defoultOpennigHoursArr: OpenDay[] = [
   { dayOfWeek: 0, opensAt: null, closesAt: null },
@@ -60,6 +64,7 @@ function AboutPlace() {
     openningHours: { 0: defoultOpennigHoursArr[0] },
     brakeTimes: [],
     deliveryPrices: [],
+    deliveryOn: false,
   });
 
   const notfirstRequest = useRef(true);
@@ -75,7 +80,7 @@ function AboutPlace() {
       setDialogItem(contactsList.find(({ id }) => id === openDialog));
     }
   }, [openDialog]);
-  const updateDataElement = (key: string, value: string) => {
+  const updateDataElement = (key: keyof AboutData, value: AboutData[typeof key]) => {
     setData(prev => ({ ...prev, [key]: value }));
   };
 
@@ -102,6 +107,7 @@ function AboutPlace() {
             }, {}),
             brakeTimes: data.brakeTimes,
             deliveryPrices: data.deliveryPrices,
+            deliveryOn: data.deliveryOn || false,
           }))
         );
       })
@@ -122,6 +128,7 @@ function AboutPlace() {
       phone: data.phone || null,
       placeDescription: data.placeDescription || null,
       placeAddress: data.placeAddress || null,
+      deliveryOn: data.deliveryOn,
     };
 
     aboutApi
@@ -214,6 +221,17 @@ function AboutPlace() {
   return (
     <>
       <Box>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={data.deliveryOn}
+                onChange={e => updateDataElement('deliveryOn', e.target.checked)}
+              />
+            }
+            label="Доставка увімкнена"
+          />
+        </FormGroup>
         <h2>Контактна інформація</h2>
         <List
           sx={{
