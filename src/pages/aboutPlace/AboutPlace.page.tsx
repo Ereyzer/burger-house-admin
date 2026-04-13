@@ -3,21 +3,24 @@ import { AboutApi } from '../../api/services/about';
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControlLabel,
+  FormGroup,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
   TextField,
-  Typography,
 } from '@mui/material';
 import type { BrakeTime, DeliveryPrice, OpenDay } from './interface';
 import BrakeTimesList from './BrakeTimesList';
 import DeliveryPriceList from './deliveryPrices';
+import OneDayWorkHour from './OneDayWorkHour';
 
 interface AboutData {
   id?: number;
@@ -30,6 +33,7 @@ interface AboutData {
   openningHours: { [key: number]: OpenDay };
   brakeTimes: { workDate: string; closesAt: string; opensAt: string; id: string }[];
   deliveryPrices: DeliveryPrice[];
+  deliveryOn: boolean;
 }
 const defoultOpennigHoursArr: OpenDay[] = [
   { dayOfWeek: 0, opensAt: null, closesAt: null },
@@ -60,6 +64,7 @@ function AboutPlace() {
     openningHours: { 0: defoultOpennigHoursArr[0] },
     brakeTimes: [],
     deliveryPrices: [],
+    deliveryOn: false,
   });
 
   const notfirstRequest = useRef(true);
@@ -75,7 +80,7 @@ function AboutPlace() {
       setDialogItem(contactsList.find(({ id }) => id === openDialog));
     }
   }, [openDialog]);
-  const updateDataElement = (key: string, value: string) => {
+  const updateDataElement = (key: keyof AboutData, value: AboutData[typeof key]) => {
     setData(prev => ({ ...prev, [key]: value }));
   };
 
@@ -86,8 +91,6 @@ function AboutPlace() {
     aboutApi
       .getAbout()
       .then(data => {
-        // console.log(data);
-
         return (
           data &&
           setData(prev => ({
@@ -104,6 +107,7 @@ function AboutPlace() {
             }, {}),
             brakeTimes: data.brakeTimes,
             deliveryPrices: data.deliveryPrices,
+            deliveryOn: data.deliveryOn || false,
           }))
         );
       })
@@ -124,6 +128,7 @@ function AboutPlace() {
       phone: data.phone || null,
       placeDescription: data.placeDescription || null,
       placeAddress: data.placeAddress || null,
+      deliveryOn: data.deliveryOn,
     };
 
     aboutApi
@@ -132,19 +137,6 @@ function AboutPlace() {
       .catch(err => {
         console.log(err);
       });
-  };
-
-  const changeOpenHours = (value: string, id: number) => {
-    setData(prev => ({
-      ...prev,
-      opennigHours: { ...prev.openningHours, [id]: { ...prev.openningHours[id], opensAt: value } },
-    }));
-  };
-  const changeCloseHours = (value: string, id: number) => {
-    setData(prev => ({
-      ...prev,
-      opennigHours: { ...prev.openningHours, [id]: { ...prev.openningHours[id], closesAt: value } },
-    }));
   };
 
   const saveDayOpeningTime = (data: OpenDay) => {
@@ -165,7 +157,7 @@ function AboutPlace() {
       .then(() => {
         setData(prev => ({
           ...prev,
-          opennigHours: {
+          openningHours: {
             ...prev.openningHours,
             [dayOfWeek]: {
               dayOfWeek,
@@ -229,6 +221,17 @@ function AboutPlace() {
   return (
     <>
       <Box>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={data.deliveryOn}
+                onChange={e => updateDataElement('deliveryOn', e.target.checked)}
+              />
+            }
+            label="Доставка увімкнена"
+          />
+        </FormGroup>
         <h2>Контактна інформація</h2>
         <List
           sx={{
@@ -334,57 +337,12 @@ function AboutPlace() {
           {...Object.values(data.openningHours)
             .reverse()
             .reduce((acc, i) => {
-              let day = '';
-              switch (i.dayOfWeek) {
-                case 0:
-                  day = 'Неділя';
-                  break;
-
-                case 1:
-                  day = 'Понеділок';
-                  break;
-
-                case 2:
-                  day = 'Вівторрок';
-                  break;
-
-                case 3:
-                  day = 'Середа';
-                  break;
-
-                case 4:
-                  day = 'Четвер';
-                  break;
-
-                case 5:
-                  day = "П'ятниця";
-                  break;
-                case 6:
-                  day = 'Субота';
-                  break;
-              }
-
               const element = (
-                <ListItem
-                  key={i.dayOfWeek}
-                  sx={{ width: '600px', display: 'flex', justifyContent: 'space-between' }}
-                >
-                  <Typography sx={{ width: '40px' }}>{day}</Typography>
-                  <TextField
-                    type="time"
-                    value={i.opensAt || ''}
-                    label={'З '}
-                    onChange={e => changeOpenHours(e.target.value, i.dayOfWeek)}
-                  />
-                  <TextField
-                    type="time"
-                    value={i.closesAt || ''}
-                    onChange={e => changeCloseHours(e.target.value, i.dayOfWeek)}
-                    label="По "
-                  />
-                  <Button onClick={() => resetOpeningTime(i.dayOfWeek)}>Скинути</Button>
-                  <Button onClick={() => saveDayOpeningTime(i)}>Зберегти</Button>
-                </ListItem>
+                <OneDayWorkHour
+                  oneDay={i}
+                  saveDayOpeningTime={saveDayOpeningTime}
+                  resetOpeningTime={resetOpeningTime}
+                />
               );
 
               if (i.dayOfWeek === 0) {

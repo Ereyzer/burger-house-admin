@@ -8,7 +8,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import OrderRow from './orderRow';
 import { OrdersApi } from '../../api/services/orders';
 import type { Status } from './types';
@@ -27,20 +27,22 @@ function OrdersList() {
   // const [perPage, setPerPage] = useState(10);
   // const [page, setPage] = useState(1);
   const [openOrder, setOpenOrder] = useState<null | FullOrder>(null);
-  // const isFirstLoad = useRef(true);
+  const isFirstLoad = useRef(true);
+  // const counter = useRef(0);
+  // console.log(counter);
 
   // useEffect(() => {
   //   dispatch(getAllOrders({ page, perPage }));
   // }, [page, perPage, dispatch]);
 
   useEffect(() => {
-    // if (!isFirstLoad.current) return;
-    // isFirstLoad.current = false;
     const interval = setInterval(() => {
       ordersApi.getActual().then(data => {
         setOrders(data);
       });
-    }, 12000);
+    }, 300000); //300000
+    if (!isFirstLoad.current) return;
+    isFirstLoad.current = false;
     ordersApi.getActual().then(data => {
       setOrders(data);
     });
