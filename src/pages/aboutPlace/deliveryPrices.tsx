@@ -108,7 +108,7 @@ function DeliveryPriceList({ prices, addDeliveryPrice, rmDeliveryPrice }: Props)
                       addDeliveryPrice({
                         distance: Number(distamce),
                         minOrder: Number(minOrder),
-                        deliveryPrice: Number(minOrder),
+                        deliveryPrice: Number(deliveryPrice),
                       })
                     }
                   >
