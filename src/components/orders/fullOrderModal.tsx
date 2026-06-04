@@ -1,6 +1,6 @@
 import { Box, Button, List, ListItem, Typography } from '@mui/material';
 import type { FullOrder } from './interface';
-import type { Status } from './types';
+import type { PaymentMethod, Status } from './types';
 
 interface Props {
   order: FullOrder;
@@ -37,6 +37,15 @@ const statusButtonText = (status: Status) => {
 };
 const flexBoxStyles = { display: 'flex', justifyContent: 'space-between' };
 
+const PaymentType: Record<PaymentMethod, string> = {
+  CARD_ON_DELIVERY: 'Карткою при отриманні',
+  CASH_ON_DELIVERY: 'Готівкою при отриманні',
+  CARD_ONLINE: 'Карткою онлайн',
+  BANK_TRANSFER: 'Банківський переказ',
+  PAYPAL: 'PayPal',
+  APPLE_PAY: 'Apple Pay',
+  GIFT_CARD: 'Подарункова картка',
+};
 function FullOrderModal({ order, handleStatus, onClose }: Props) {
   return (
     <Box sx={style}>
@@ -75,6 +84,24 @@ function FullOrderModal({ order, handleStatus, onClose }: Props) {
           <Box sx={flexBoxStyles}>
             <Typography>Адреса</Typography>
             <Typography>{order.addressFull}</Typography>
+          </Box>
+        )}
+        {order.addressClarification && (
+          <Box sx={flexBoxStyles}>
+            <Typography>Уточнення по адресі</Typography>
+            <Typography>{order.addressClarification}</Typography>
+          </Box>
+        )}
+        {order.description && (
+          <Box sx={flexBoxStyles}>
+            <Typography>Примітка до замовлення</Typography>
+            <Typography>{order.description}</Typography>
+          </Box>
+        )}
+        {order.payment && (
+          <Box sx={flexBoxStyles}>
+            <Typography>Оплата</Typography>
+            <Typography>{PaymentType[order.payment]}</Typography>
           </Box>
         )}
       </Box>
